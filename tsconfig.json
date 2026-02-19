@@ -30,5 +30,5 @@
     /* Environment types */
     "types": ["node"]
   },
-  "include": ["src", "src/db/index.ts", "src/db/schema/index.ts"]
+  "include": ["src"]
 }
