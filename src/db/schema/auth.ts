@@ -6,6 +6,7 @@ import {
   boolean,
   pgEnum,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 const timestamps = {
@@ -62,7 +63,7 @@ export const account = pgTable(
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
     scope: text("scope"), //The scope of the account. Returned by the provider
     idToken: text("id_token"), //The ID token returned from the provider
-    password: text("password"), //The password of the account. Mainly used for email and password authentication
+    password: text("password"), // The One-way password hash only. Mainly used for email and password authentication
 
     ...timestamps,
 
@@ -70,7 +71,13 @@ export const account = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },
-  (table) => [index("account_user_id_idx").on(table.userId)],
+  (table) => [
+    index("account_user_id_idx").on(table.userId),
+    uniqueIndex("account_provider_account_unique").on(
+      table.providerId,
+      table.accountId,
+    ),
+  ],
 );
 
 export const verification = pgTable(

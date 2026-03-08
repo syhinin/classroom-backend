@@ -8,6 +8,7 @@ import {
   text,
   timestamp,
   varchar,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
@@ -96,7 +97,7 @@ export const enrollments = pgTable(
   (table) => [
     index("enrollments_student_id_idx").on(table.studentId),
     index("enrollments_class_id_idx").on(table.classId),
-    index("enrollments_student_class_unique").on(
+    uniqueIndex("enrollments_student_class_unique").on(
       table.studentId,
       table.classId,
     ),
