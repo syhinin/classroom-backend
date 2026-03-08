@@ -15,6 +15,13 @@
       "when": 1771449803390,
       "tag": "0001_heavy_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773006728043,
+      "tag": "0002_bored_human_fly",
+      "breakpoints": true
     }
   ]
 }
