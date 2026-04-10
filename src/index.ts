@@ -3,6 +3,7 @@ import cors from "cors";
 
 import subjectsRouter from "./routes/subjects";
 import securityMiddleware from "./middleware/security";
+import { authMiddleware } from "./middleware/auth";
 
 const app = express();
 const PORT = 8000;
@@ -21,9 +22,7 @@ app.use(
 
 app.use(express.json());
 
-app.use(securityMiddleware)
-
-app.use("/api/v1/subjects", subjectsRouter);
+app.use("/api/v1/subjects", authMiddleware, securityMiddleware, subjectsRouter);
 
 app.get("/", (_req, res) => {
   res.json({ message: "Classroom API is running" });

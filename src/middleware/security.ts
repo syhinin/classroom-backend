@@ -47,11 +47,16 @@ const securityMiddleware = async (
       headers: req.headers,
       url: req.originalUrl ?? req.url,
       socket: {
-        remoteAddress: req.socket.remoteAddress ?? req.ip ?? "0.0.0.0",
+        remoteAddress: req.ip ?? req.socket.remoteAddress ?? "0.0.0.0",
       },
     };
 
     const decision = await client.protect(arcjetRequest);
+
+    if (decision.isErrored()) {
+      console.error("Arcjet middleware error:", decision.reason.message, decision.reason);
+      return next();
+    }
 
     //Bot traffic is not allowed, return a 403 Forbidden response
     if (decision.isDenied() && decision.reason.isBot()) {
@@ -69,7 +74,7 @@ const securityMiddleware = async (
     }
 
     if (decision.isDenied() && decision.reason.isRateLimit()) {
-      return res.status(403).json({
+      return res.status(429).json({
         error: "Too Many Requests",
         message,
       });
@@ -85,10 +90,7 @@ const securityMiddleware = async (
     next();
   } catch (error) {
     console.error("Arcjet middleware error:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: "Something went wrong with security middleware",
-    });
+    next();
   }
 };
 
